@@ -1,0 +1,26 @@
+{
+    "code": "200",
+    "msg": "成功",
+    "model": {
+        "provinceAndUserInvest": [
+            {
+                "name": "上海",
+                "lb": "投资",
+                "realName": "小李",
+                "amt": 101000
+            },
+            {
+                "name": "湖北",
+                "lb": "充值",
+                "realName": "小李",
+                "amt": 100
+            },
+            {
+                "name": "湖南",
+                "lb": "提现",
+                "realName":"小李",
+                "amt": 100
+            }
+        ]
+    }
+}

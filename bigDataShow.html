@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="renderer" content="webkit">
+		<meta content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width" name="viewport">
+		<meta name="applicable-device" content="pc">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<title>亿宝贷大数据监控</title>
+		<link rel="stylesheet" type="text/css" href="bigDataShow/resetcss.css" />
+		<link rel="stylesheet" type="text/css" href="bigDataShow/bigDataShow.css" />
+		<link rel="stylesheet" type="text/css" href="bigDataShow/lcdFont/stylesheet.css" />
+	</head>
+
+	<body>
+		<!--开始-->
+		<div class="content">
+			<div class="top clearfix">
+				<section class="section section-one">
+					<p class="title">省份投资龙虎榜</p>
+					<!--横向表格-->
+					<div id="bigDateInvestChart" style="width: 90%;height:80%;margin-left: 5%;"></div>
+				</section>
+				<section class="section">
+					<div class="total_register">
+						<p>历史累计总注册用户数</p>
+						<ul class="register_num">
+							<!--<li>8</li>
+							<li>8</li>
+							<li>8</li>
+							<li>8</li>
+							<li>8</li>
+							<li>8</li>
+							<li>8</li>
+							<li>8</li>
+							<li>人次</li>-->
+						</ul>
+					</div>
+					<section class="section-two">
+						<div class="main-title">
+							<div class="investment_money">
+								<p class="lcd_number">12,345,657,890<i>元</i></p>
+							</div>
+						</div>
+						<iframe src="bigDataShow/effectScatter-map.html" width="100%" height="80%"></iframe>
+					</section>					
+				</section>
+				<!--section3-->
+				<section class="section section-three">
+					<p class="title">年龄持有金额</p>
+					<div class="timer"></div>
+					<div id="ageChart" style="width: 100%;height:80%;margin-left: 0%;"></div>
+				</section>
+			</div>
+			<div class="bottom clearfix">
+				<!--section4-->
+				<section class="section section-four">
+					<p class="title">按设备类型划分</p>
+					<div id="equmentTypeChart" style="width: 90%;height:80%;margin-left: 5%;"></div>
+				</section>
+				<!--section5-->
+				<section class="section section-five">
+					<p class="title">产品投资情况</p>
+					<div id="sectionFive" style="width: 40%;height:84%;"></div>
+					<div id="sectionFiveTable">
+						<table>
+							<thead>
+								<tr>
+									<th></th>
+									<th>投资人数(人次)</th>
+									<th>投资金额(万元)</th>
+									</th>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</section>
+				<!--section6-->
+				<section class="section section-six">
+					<p class="title">用户投资情况</p>
+					<div id="userInvestmentChart" style="width: 90%;height:80%;margin-left: 5%;"></div>
+				</section>
+			</div>
+		</div>
+
+		<script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+		<script src="../../js/common/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="bigDataShow/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="bigDataShow/bigDateShow.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+	<script type="text/javascript" charset="utf-8">
+		var section2Ajax = {
+			init:function(){
+				var self = this;
+				this.reloadAjax(function(data){
+					self.totalUserCount(data);
+				},"findTotalUserCount");
+				this.reloadAjax(function(data){
+					self.totalAmount(data);
+				},"findTotalAmount")
+			},
+			reloadAjax:function(callback,param){
+				$.post(BASE_URL+param,
+				{},function(data){
+					if(data.code == "200"){
+						console.log(data);
+						callback(data.model);
+					}
+				});
+			},
+			totalUserCount:function(data){
+				data = data.totalUserCount;
+				typeof data == "number"?data = parseInt(data)+"":"";
+				data.split("").concat("人次").forEach(function(item){
+					var $li = '<li>'+item+'</li>';
+					$(".register_num").append($li);
+				})
+			},
+			totalAmount:function(data){
+				data = data.totalAmount;
+				typeof data == "number"?(function(){
+					var re=/(?=(?!(\b))(\d{3})+$)/g;
+					data = parseInt(data)+"";
+					data = data.replace(re,",");
+				})():"";
+				$(".lcd_number").html("累计投资金额"+data+'<i>元</i>');
+			}
+		}
+		section2Ajax.init();
+	</script>
+
+</html>

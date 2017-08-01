@@ -1,0 +1,295 @@
+.clearfix {
+    overflow: hidden;
+}
+
+@baseWidth: 5760;
+@baseHeight: 2160;
+.content {
+    width: 100vw;
+    height: 100vh;
+    background: url(background.png) no-repeat center center;
+    background-size: cover;
+    .top,
+    .bottom {
+        height: 1080/2160*100vh;
+    }
+    .section {
+        width: 1920/5760*100vw;
+        height: 100%;
+        float: left;
+        p[class='title'] {
+            background: url("title-box.png") no-repeat top center;
+            color: #52ffff;
+            width: 560/@baseWidth*100vw;
+            height: 144/@baseHeight*100vh;
+            background-size: 100%;
+            text-align: left;
+            line-height: 144/2/@baseHeight*100vh + 1vh;
+            text-indent: .5em;
+            font-size: 44/@baseWidth*100vw + 0.3vw;
+            margin-left: 176/@baseWidth*100vw;
+            margin-top: 52/@baseHeight*100vh;
+        }
+    }
+    .section-one {
+        //padding-left: 152 / @baseWidth*100vw;
+        ul {
+            margin-left: 176/@baseWidth*100vw;
+            li {
+                position: relative;
+                width: auto;
+                height: 108 / @baseHeight * 100vh;
+                margin-bottom: 24/@baseHeight*100vh;
+                background-color: #11334e;
+                span {
+                    display: inline-block;
+                    margin-top: 25/@baseHeight*100vh;
+                }
+                .rank-span {
+                    margin-left: 20px;
+                    border: 1px solid #52ffff;
+                    width: 60 / @baseWidth *100vw;
+                    height: 60 / @baseWidth *100vw;
+                    display: inline-block;
+                    color: white;
+                    text-align: center;
+                    line-height: 60 / @baseWidth *100vw;
+                    margin-right: 40/@baseWidth * 100vw;
+                }
+                .mask-line {
+                    border: 1px solid #52ffff;
+                    width: 936/@baseWidth*100vw;
+                    position: relative;
+                    height: 40/@baseHeight*100vh;
+                    top: 12/@baseHeight*100vh;
+                    i {
+                        background: red;
+                        display: inline-block;
+                        height: 14/@baseHeight*100vh;
+                        position: absolute;
+                        top: 15/@baseHeight*100vh;
+                    }
+                }
+                .city-name {
+                    color: white;
+                    margin-right: 46/@baseWidth*100vw;
+                    font-size: 40/@baseWidth vw;
+                }
+                .money {
+                    .city-name;
+                    position: absolute;
+                    top: 15/@baseHeight*100vh;
+                    margin-left: 20/@baseWidth*100vw;
+                }
+            }
+        }
+        .footer-tips {
+            color: white;
+            float: right;
+        }
+    }
+    //总注册人数
+    .total_register{
+        color: #51FFFF;
+        font-size: 38/@baseWidth*100vw;
+        line-height: 144/2/@baseHeight*100vh;
+        height: 144/2/@baseHeight*100vh;
+        width: 75%;
+        margin: 0 auto;
+        p{
+            float: left;
+            margin-right: 20/@baseWidth*100vw;
+        }
+        .register_num{
+            float: left;
+            &>li{
+                display: inline-block;
+                font-size: 50/@baseWidth*100vw;
+                height: 95%;
+                line-height: 95%;
+                background-color: #02102b;
+                padding: 10/@baseHeight*100vh;
+                margin: 0 10/@baseWidth*100vw;
+            }
+            &>li:last-child{
+                background-color: transparent;
+                font-size: 30/@baseWidth*100vw;
+            }
+        }
+    }
+    
+    //大数据监控
+    .section-two {
+        background: url(title.png) no-repeat top center;
+        background-size: 100%;
+        height: 100%;
+        width: 100%;
+        iframe{
+            border: 0;
+        }
+        .main-title{
+            color: #51FFFF;
+            font-size: 30/@baseWidth*100vw;
+            position: relative;
+            top: 10%;
+            left: 28%;
+            .investment_money {
+                background: url(money-box.png) no-repeat top center;
+                background-size: 100%;
+                width:720/@baseWidth*100vw;
+                text-align: center;        
+//                height: 110/@baseHeight*100vh;
+//                &>p:nth-of-type(1){
+//                   font-size: 60/@baseWidth*100vw;
+//                   line-height: 144/2/@baseHeight*100vh;
+//                  span{
+//                      font-size: 1/@baseWidth*100vw;
+//                      color: white;
+//                      margin-left: 10/@baseWidth*100vw;
+//                  }
+//               }
+                .lcd_number{
+                    font-family: 'lcd_att_phone_timedateregular';
+                    font-size: 120/@baseWidth*100vw;
+                    letter-spacing: 1/@baseWidth*100vw;
+                    i{
+                        font-size: 20/@baseWidth*100vw;
+                        padding: 0 20/@baseWidth*100vw;
+                    }
+                }
+            }   
+        }
+        //ChinaMap
+        .tooltip{
+            width:175/@baseWidth*100vw;
+            height: 70/@baseHeight*100vh;
+            background: url(user.png) no-repeat center; 
+            position: relative;
+            color: #fff45c;
+            background-size: 100%; 
+            top: -80px; 
+            left: 10%;
+        }
+    }
+    //年龄持有金额占比
+    .section-three {
+        .title {
+            float: left;
+        }
+        .timer {
+            width: (374-34)/@baseWidth*100vw + 0.2vw;
+            height: (200-58)/@baseHeight*100vh;
+            background: black;
+            border-radius: 10px;
+            display: inline-block;
+            float: right;
+            margin-right: 40/@baseWidth*100vw;
+            padding-top: 22/@baseWidth*100vw;
+            padding-right: 16/@baseWidth*100vw;
+            padding-bottom: 36/@baseHeight*100vh;
+            padding-left: 18/@baseWidth*100vw;
+            margin-top: 20/@baseHeight*100vh;
+            margin-right: 40/@baseWidth*100vw;
+            span {
+                color: white;
+                font-size: 20/@baseWidth*100vw;
+                width: 100%;
+                display: inline-block;
+                text-align: center;
+            }
+            div {
+                i {
+                    display: inline-block;
+                    background: #535353;
+                    color: white;
+                    width: 70/@baseWidth*100vw;
+                    height: 110/@baseHeight*100vh;
+                    border-radius: 6px;
+                    font-size: 70/@baseWidth*100vw;
+                    text-align: center;
+                    line-height: 110/@baseHeight*100vh;
+                    margin-right: 5/@baseWidth*100vw;
+                    margin-top: 20/@baseWidth*100vw;
+                    font-weight: bold;
+                    color: white;
+                }
+                .slice {
+                    background: none;
+                    width: 10px;
+                }
+            }
+        }
+        #ageChart{
+           clear: both;
+        }
+    }
+    //设备类型划分
+    .section-four {
+        #ageChart {
+            clear: both;
+        }
+    }
+    //产品投资情况
+    .section-five {
+        div {
+            float: left;
+        }
+        #sectionFiveTable {
+            //margin-left: 84/@baseWidth*100vw;
+            margin-top: 5vh;
+            margin-left: 1vh;
+        }
+        table {
+            thead {
+                tr {
+                    height: 110/@baseHeight*100vh;
+                    th {
+                        color: #51ffff;
+                        line-height:36/@baseHeight*100vh;
+                        font-size: 40/@baseWidth*100vw;
+                        padding-left:20/@baseWidth*100vw;
+                        padding-right: 20/@baseWidth*100vw;
+                    }
+                }
+            }
+            tbody {
+                tr {
+                    height: 110/@baseHeight*100vh;
+                    td {
+                        height: 36/@baseHeight*100vh;
+                        color: #51ffff;
+                        line-height: 36/@baseHeight*100vh;
+                        font-size: 36/@baseWidth*100vw;
+                        text-align: center;
+                        .order {
+                            display: inline-block;
+                            width: 36/@baseWidth*100vw;
+                            height: 36/@baseWidth*100vw;
+                            border-radius: 2px;
+                            margin-right: 40/@baseWidth*100vw;
+                        }
+                        .order1 {
+                            background: #fd6120;
+                        }
+                        .order2 {
+                            background: #1096bf;
+                        }
+                        .order3 {
+                            background: #b12216;
+                        }
+                        .order4 {
+                            background: #0cb385;
+                        }
+                        .order5 {
+                            background: #f3ac1e;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //用户投资情况
+    .section-six {
+        
+    }
+}
