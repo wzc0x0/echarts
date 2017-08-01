@@ -12,14 +12,14 @@
             {
                 "name": "湖北",
                 "lb": "充值",
-                "realName": "小李",
+                "realName": "小王",
                 "amt": 100
             },
             {
                 "name": "湖南",
                 "lb": "提现",
-                "realName":"小李",
-                "amt": 100
+                "realName":"小张",
+                "amt": 0
             }
         ]
     }

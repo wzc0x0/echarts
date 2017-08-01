@@ -10,7 +10,7 @@
         .tooltip_tips{float: left;padding-top: 3px}
         .tooltip p{font-size:0.1vw;line-height: .3;margin-left: 1vh;}
         .tooltip p:nth-of-type(3){font-size:3.6vh;}
-        html,body{margin: 0;padding: 0;overflow: hidden;}
+        html,body{margin: 0;padding: 0;overflow: hidden;background-color: #02102b}
    </style>
    <body style="width: 100%;height: 100%;">
        <div id="container" style="width: 100%;height: 100%;"></div>
@@ -25,7 +25,6 @@
        <script type="text/javascript">
 var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
-var app = {};
 option = null;
 var geoCoordMap = {
     '海门':[121.15,31.89],
@@ -251,197 +250,150 @@ var province = [
 	{"青海":"西宁"},
 	{"宁夏回族自治区":"银川"},
 	{"新疆维吾尔自治区":"乌鲁木齐"},
-	{"云南":"昆明"}
+    {"其他":"上海"}
 ];
 
 
 
 //convertData();
-$.post("http://192.168.188.134:8086/activity/v1/api/BigDataMonitoringSystemController/findProvinceAndUserInvest").done(function(data){
-	if(data.code == "200") {
-		var index = 0;
-		console.log(data.model.provinceAndUserInvest.length);
-		setInterval(function(){
-			setTimeout(covertData(data.model.provinceAndUserInvest,index),0);
-			if(index >= data.model.provinceAndUserInvest.length-1) index = 0;
-			else index++;
-		},1000)
-	}
-})
 
-function covertData(data,i){	
-	var who = data[i].realName|| "";
-	var howMuch = data[i].amt+'元' || "";
-	var mapTip = [
-	    '<div class="tooltip">',
-	    '    <img src="avatar.png" />',
-	    '    <div class="tooltip_tips">',
-	    '        <p >'+data[i].name+'&emsp;'+who+'</p>',
-	    '        <p>'+data[i].lb+'</p>',
-	    '        <p >'+howMuch+'</p>',
-	    '    </div>',
-	    '</div>'
-	]
-	
-	
-	
-	var res = [];
-	province.forEach(function(item){
-		if(item[data[i].name]){
-			res.push({
-				name:data[i].name,
-				value:geoCoordMap[item[data[i].name]]
-			});
-		}
-	})
-	//console.log(res);
-				myChart.setOption({
-						/*tooltip : {
-					        trigger: 'item',
-					        alwaysShowContent:true
-					        backgroundColor:'rgba(50,50,50,0)',
-					        formatter:mapTip.join(""),
-					        position:function(pos, params, dom, rect, size){
-					        	console.log(pos,params,dom)
-					        }
-					       	formatter: function (params, ticket, callback) {
-							    $.get('detail?name=' + params.name, function (content) {
-							        callback(ticket, toHTML(content));
-							    });
-							    return 'Loading';							   console.log(params,ticket,callback)
-							}
-					    },*/
-				    	series : [
-						       {
-						            type: 'scatter',
-						            coordinateSystem: 'geo',
-						            data:res,
-						            //data: [{name:"上海",value:[126.63,45.75]}],
-						            symbolSize:10,
-						            label: {
-						                normal: {
-						                    formatter: '{b}',
-						                    position: 'right',
-						                    show: false
-						                },
-						                emphasis: {
-						                    show: false
-						                }
-						            },
-						            itemStyle: {
-						                normal: {
-						                    color: '#ddb926'
-						                }
-						            }
-						        },
-						        {
-						            type: 'effectScatter',
-						            coordinateSystem: 'geo',
-						            data:res,
-						            //data:[{name:"上海",value:[126.63,45.75]}],
-						            symbolSize: 10,
-						            showEffectOn: 'render',
-						            rippleEffect: {
-						                brushType: 'stroke'
-						            },
-						            hoverAnimation: true,
-						           label: {
-						                normal: {
-						                    formatter: '{b}',
-						                    position: 'right',
-						                    show: true
-						                }
-						            },
-						            itemStyle: {
-						                normal: {
-						                    color: '#f4e925',
-						                    shadowBlur: 10,
-						                    shadowColor: '#333'
-						                }
-						            },
-						            zlevel: 1
-						        }
-						    ]						
-				  });
-	
-				
-}
+var bigDataMap = {
+    init:function () {
+        var self = this;
+        var clear = null;
+        self.reloadAjax(function (data) {
+            self.markLoop(data);
+        })
+
+        setInterval(function () {
+            self.reloadAjax(function (data) {
+                if(clear) clearInterval(clear);
+                clear = self.markLoop(data);
+            })
+        },5000)
+    },
+    reloadAjax:function (callback) {
+        $.get("chinaMap.json").done(function(data){
+            if(data.code == "200" && data.model.provinceAndUserInvest) {
+                callback(data.model.provinceAndUserInvest);
+            }
+        })
+    },
+    markLoop:function (data) {
+        var self = this;
+        var index = 1;
+        self.covertData(data,0);
+
+        var clear = setInterval(function () {
+            self.covertData(data,index);
+            if(index >= data.length-1) index = 0;
+            else index++;
+        },1000);
+        return clear;
+    },
+    covertData:function (data,i) {
+        var who = data[i].realName|| "";
+        var howMuch = data[i].amt >= 10e3?(data[i].amt/10e3).toFixed(1)+'万':(function () {
+            if(data[i].amt) return data[i].amt+'元';
+            else return "";
+        })();
+
+        var mapTip = [
+            '<div class="tooltip">',
+            '    <img src="avatar.png" />',
+            '    <div class="tooltip_tips">',
+            '        <p >'+data[i].name+'&emsp;'+who+'</p>',
+            '        <p>'+data[i].lb+'</p>',
+            '        <p >'+howMuch+'</p>',
+            '    </div>',
+            '</div>'
+        ];
+
+        var res = [];
+        province.forEach(function(item){
+            if(item[data[i].name]){
+                res.push({
+                    name:data[i].name,
+                    value:geoCoordMap[item[data[i].name]]
+                });
+            }
+        })
+        //console.log(res);
+        myChart.setOption({
+            tooltip : {
+                trigger: 'item',
+                alwaysShowContent:true,
+                backgroundColor:'rgba(50,50,50,0)',
+                formatter:mapTip.join("")
+            },
+            series : [
+                {
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    data:res,
+                    symbolSize:10,
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: false
+                        },
+                        emphasis: {
+                            show: false
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#ddb926'
+                        }
+                    }
+                },
+                {
+                    type: 'effectScatter',
+                    coordinateSystem: 'geo',
+                    data:res,
+                    symbolSize: 10,
+                    showEffectOn: 'render',
+                    rippleEffect: {
+                        brushType: 'stroke'
+                    },
+                    hoverAnimation: true,
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: true
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#f4e925',
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    zlevel: 1
+                }
+            ]
+        });
+        myChart.dispatchAction({
+            type: 'showTip',
+            seriesIndex: 0,
+            dataIndex: 0
+        });
+        myChart.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: 0
+        });
+
+    }
+};
 
 
+bigDataMap.init();
 
-/*function convertData() {
-	$.get("chinaMap.json").done(function(data){
-		if(data.code == "200"){
-			data.model.provinceAndUserInvest.forEach(function(item1){
-				if(item1.name){
-					var res = [];
-				    province.forEach(function(item){
-				    	if(item[data]){
-				    		res.push({
-					    		name:item[data],
-					    		value:geoCoordMap[item[data]]
-					    	});
-				    	}
-				    })   
-				    console.log(res);
-				    myChart.setOption({
-				    	series : [
-						       {
-						            type: 'scatter',
-						            coordinateSystem: 'geo',
-						            data:res,
-						            //data: [{name:"上海",value:[126.63,45.75]}],
-						            symbolSize:10,
-						            label: {
-						                normal: {
-						                    formatter: '{b}',
-						                    position: 'right',
-						                    show: false
-						                },
-						                emphasis: {
-						                    show: false
-						                }
-						            },
-						            itemStyle: {
-						                normal: {
-						                    color: '#ddb926'
-						                }
-						            }
-						        },
-						        {
-						            type: 'effectScatter',
-						            coordinateSystem: 'geo',
-						            data:res,
-						            //data:[{name:"上海",value:[126.63,45.75]}],
-						            symbolSize: 10,
-						            showEffectOn: 'render',
-						            rippleEffect: {
-						                brushType: 'stroke'
-						            },
-						            hoverAnimation: true,
-						           label: {
-						                normal: {
-						                    formatter: '{b}',
-						                    position: 'right',
-						                    show: true
-						                }
-						            },
-						            itemStyle: {
-						                normal: {
-						                    color: '#f4e925',
-						                    shadowBlur: 10,
-						                    shadowColor: '#333'
-						                }
-						            },
-						            zlevel: 1
-						        }
-						    ]						
-				    });
-				}
-			})
-		}
-	}) 
-};*/
+
 var mapTip = [
     '<div class="tooltip">',
     '    <img src="avatar.png" />',
@@ -453,14 +405,13 @@ var mapTip = [
     '</div>'
 ]
 
-
 option = {
-   /* tooltip : {
+    tooltip : {
         trigger: 'item',
         alwaysShowContent:true,
         backgroundColor:'rgba(50,50,50,0)',
         formatter:mapTip.join("")
-    },*/
+    },
     geo: {
         map: 'china',
         label: {
@@ -531,7 +482,7 @@ option = {
             zlevel: 1
         }
     ]
-};;
+};
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
@@ -547,11 +498,6 @@ setTimeout(function(){
         dataIndex: 0
     });
 })
-
-
-setTimeout(function(){
-	location.reload()
-},1000*60)
        </script>
    </body>
 </html>
