@@ -4,24 +4,20 @@
        <meta charset="utf-8">
    </head>
    <style>
-       	.tooltip{width:175px;height: 70px;background: url(user.png) no-repeat center; position: relative;color: #fff45c;
-       	background-size: cover; top: -80px; left: 10%;}
-        .tooltip img{float: left;padding-top: 12px;margin: 0 10px;width: 45px;height: auto;}
-        .tooltip_tips{float: left;padding-top: 3px}
-        .tooltip p{font-size:0.1vw;line-height: .3;margin-left: 1vh;}
-        .tooltip p:nth-of-type(3){font-size:3.6vh;}
-        html,body{margin: 0;padding: 0;overflow: hidden;background-color: #02102b}
+       	/*.tooltip{width:160px;height: 70px;background: url(user.png) no-repeat; position: relative;color: #fff45c;
+       	background-size: cover; top: -80px; left: 10%;}*/
+        .tooltip img{float: left;width: 40px;height: auto;}
+        .tooltip_tips{float: left;}
+        .tooltip p{font-size: 0.1vw;line-height: 0.3vw;margin-left: 5px;}
+        .tooltip p:nth-of-type(3){font-size: 1vw;}
+        html,body{margin: 0;padding: 0;overflow: hidden;}
    </style>
    <body style="width: 100%;height: 100%;">
        <div id="container" style="width: 100%;height: 100%;"></div>
-       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script>
-       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
-       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
-       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
-       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
-       <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
-       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
-       <script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+       <script src="echarts.min.js" type="text/javascript" charset="utf-8"></script>
+       <script src="china.js" type="text/javascript" charset="utf-8"></script>
+       <!-- <script src="../../../js/common/activityInfos.js" type="text/javascript" charset="utf-8"></script> -->
+		<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
        <script type="text/javascript">
 var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
@@ -270,14 +266,31 @@ var bigDataMap = {
                 if(clear) clearInterval(clear);
                 clear = self.markLoop(data);
             })
-        },5000)
+        },60*1000)
     },
     reloadAjax:function (callback) {
-        $.get("chinaMap.json").done(function(data){
+       	$.get("chinaMap.json").done(function(data){
             if(data.code == "200" && data.model.provinceAndUserInvest) {
                 callback(data.model.provinceAndUserInvest);
             }
         })
+       	/*$.post("https://www.001bank.com:18081/activity/v1/api/BigDataMonitoringSystemController/findProvinceAndUserInvest").done(function(data){
+            if(data.code == "200" && data.model.provinceAndUserInvest) {
+                callback(data.model.provinceAndUserInvest);
+            }
+        })*/
+       /*var xhr = new XMLHttpRequest();
+       xhr.open('POST', ACTIVITY_BASE_URL+'BigDataMonitoringSystemController/findProvinceAndUserInvest',true);
+       xhr.onreadystatechange = function(){
+       		if(xhr.readyState == 4 && xhr.status == 200){
+       			var data = JSON.parse(this.response)
+       			if(data.code == "200" && data.model.provinceAndUserInvest){
+       				callback(data.model.provinceAndUserInvest)	
+       			}
+       			
+       		}
+       };
+       xhr.send(null);*/
     },
     markLoop:function (data) {
         var self = this;
@@ -288,21 +301,32 @@ var bigDataMap = {
             self.covertData(data,index);
             if(index >= data.length-1) index = 0;
             else index++;
-        },1000);
+        },3000);
         return clear;
     },
     covertData:function (data,i) {
-        var who = data[i].realName|| "";
-        var howMuch = data[i].amt >= 10e3?(data[i].amt/10e3).toFixed(1)+'万':(function () {
+    	var re=/(?=(?!(\b))(\d{3})+$)/g;
+        //var who = data[i].realName
+        var who = data[i].realName?(function(){
+        	var arr = data[i].realName.split("");
+			var arr1 = [];
+			arr1[0] = arr[0];
+			arr1[1] = "*";
+			arr1[2] = "*";
+			var newName = arr1.join("");
+			return newName;
+        })():"";
+        
+        var howMuch = data[i].amt >= 10e3?(data[i].amt/10e3).toFixed(1)+'万':(function () {       	
             if(data[i].amt) return data[i].amt+'元';
             else return "";
         })();
 
         var mapTip = [
             '<div class="tooltip">',
-            '    <img src="avatar.png" />',
+            '    <img src="logo.png" />',
             '    <div class="tooltip_tips">',
-            '        <p >'+data[i].name+'&emsp;'+who+'</p>',
+            '        <p >'+data[i].name+'&nbsp;'+who+'</p>',
             '        <p>'+data[i].lb+'</p>',
             '        <p >'+howMuch+'</p>',
             '    </div>',
@@ -324,6 +348,10 @@ var bigDataMap = {
                 trigger: 'item',
                 alwaysShowContent:true,
                 backgroundColor:'rgba(50,50,50,0)',
+                position: function(point){
+                	return [point[0]-135,point[1]-46];      
+                },
+                extraCssText:'width:125px;height: 50px;background: url(user.png) no-repeat;color: #fff45c;background-size: 100%;',
                 formatter:mapTip.join("")
             },
             series : [
@@ -390,13 +418,12 @@ var bigDataMap = {
     }
 };
 
-
 bigDataMap.init();
 
 
 var mapTip = [
     '<div class="tooltip">',
-    '    <img src="avatar.png" />',
+    '    <img src="logo.png" />',
     '    <div class="tooltip_tips">',
     '        <p >上海王先生</p>',
     '        <p>幸福周周乐</p>',
@@ -407,9 +434,13 @@ var mapTip = [
 
 option = {
     tooltip : {
-        trigger: 'item',
+		trigger: 'item',
         alwaysShowContent:true,
         backgroundColor:'rgba(50,50,50,0)',
+        position: function(point){
+            return [point[0]-135,point[1]-46];      
+        },
+        extraCssText:'width:125px;height: 50px;background: url(user.png) no-repeat;color: #fff45c;background-size: 100%;',
         formatter:mapTip.join("")
     },
     geo: {
@@ -441,7 +472,7 @@ option = {
             label: {
                 normal: {
                     formatter: '{b}',
-                    position: 'right',
+                    position: 'left',
                     show: false
                 },
                 emphasis: {
@@ -468,7 +499,7 @@ option = {
            label: {
                 normal: {
                     formatter: '{b}',
-                    position: 'right',
+                    position: 'left',
                     show: true
                 }
             },

@@ -20,56 +20,49 @@
 				<section class="section section-one">
 					<p class="title">省份投资龙虎榜</p>
 					<!--横向表格-->
-					<div id="bigDateInvestChart" style="width: 90%;height:80%;margin-left: 5%;"></div>
+					<div id="bigDateInvestChart" style="width: 100%;height:80%;"></div>
 				</section>
 				<section class="section">
 					<div class="total_register">
 						<p>历史累计总注册用户数</p>
-						<ul class="register_num">
-							<!--<li>8</li>
-							<li>8</li>
-							<li>8</li>
-							<li>8</li>
-							<li>8</li>
-							<li>8</li>
-							<li>8</li>
-							<li>8</li>
-							<li>人次</li>-->
-						</ul>
+						<ul class="register_num"></ul>
 					</div>
 					<section class="section-two">
 						<div class="main-title">
 							<div class="investment_money">
-								<p class="lcd_number">12,345,657,890<i>元</i></p>
+								<p>累计投资金额<span class="lcd_number"></span></p>
+								<p>累计用户收益<span class="lcd_number"></span></p>
 							</div>
 						</div>
-						<iframe src="bigDataShow/effectScatter-map.html" width="100%" height="80%"></iframe>
+						<iframe src="bigDataShow/effectScatter-map.html" width="100%" height="90%"></iframe>
 					</section>					
 				</section>
 				<!--section3-->
 				<section class="section section-three">
-					<p class="title">年龄持有金额</p>
+					<p class="title">各年龄段投资金额</p>
 					<div class="timer"></div>
-					<div id="ageChart" style="width: 100%;height:80%;margin-left: 0%;"></div>
+					<div id="ageChart" style="width: 80%;height:80%;margin-left: 10%;"></div>
+					<p class="unit">单位:万元</p>
 				</section>
 			</div>
 			<div class="bottom clearfix">
 				<!--section4-->
 				<section class="section section-four">
-					<p class="title">按设备类型划分</p>
+					<p class="title">按设备类型投资金额</p>
 					<div id="equmentTypeChart" style="width: 90%;height:80%;margin-left: 5%;"></div>
 				</section>
 				<!--section5-->
 				<section class="section section-five">
-					<p class="title">产品投资情况</p>
-					<div id="sectionFive" style="width: 40%;height:84%;"></div>
+					<p class="title title-product">产品投资情况(当天)</p>
+					<div id="sectionFive" style="width:37%;height:84%;margin-left: 3%;"></div>
 					<div id="sectionFiveTable">
 						<table>
 							<thead>
 								<tr>
 									<th></th>
-									<th>投资人数(人次)</th>
-									<th>投资金额(万元)</th>
+									<th>投资人数<br/>(人次)</th>
+									<th>投资金额<br/>(万元)</th>
+									<th>投资占比</th>
 									</th>
 							</thead>
 							<tbody></tbody>
@@ -84,8 +77,9 @@
 			</div>
 		</div>
 
-		<script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+		<script src="../../js/lib/jquery-2.2.0.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../../js/common/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/common/activityInfos.js" type="text/javascript" charset="utf-8"></script>
 		<script src="bigDataShow/echarts.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="bigDataShow/bigDateShow.js" type="text/javascript" charset="utf-8"></script>
 	</body>
@@ -98,10 +92,13 @@
 				},"findTotalUserCount");
 				this.reloadAjax(function(data){
 					self.totalAmount(data);
-				},"findTotalAmount")
+				},"findTotalAmount");
+				this.reloadAjax(function(data){
+					self.totalInverstAmount(data);
+				},"findTotalInverstAmount")
 			},
 			reloadAjax:function(callback,param){
-				$.post(BASE_URL+param,
+				$.post(ACTIVITY_BASE_URL+"BigDataMonitoringSystemController/"+param,
 				{},function(data){
 					if(data.code == "200"){
 						console.log(data);
@@ -112,6 +109,9 @@
 			totalUserCount:function(data){
 				data = data.totalUserCount;
 				typeof data == "number"?data = parseInt(data)+"":"";
+				
+				$(".register_num").children().remove();
+				
 				data.split("").concat("人次").forEach(function(item){
 					var $li = '<li>'+item+'</li>';
 					$(".register_num").append($li);
@@ -124,10 +124,21 @@
 					data = parseInt(data)+"";
 					data = data.replace(re,",");
 				})():"";
-				$(".lcd_number").html("累计投资金额"+data+'<i>元</i>');
+				$(".lcd_number").eq(0).html(data+'<i>元</i>');
+			},
+			totalInverstAmount:function(data){
+				typeof data == "number"?(function(){
+					var re=/(?=(?!(\b))(\d{3})+$)/g;
+					data = parseInt(data)+"";
+					data = data.replace(re,",");
+				})():"";				
+				$(".lcd_number").eq(1).html(data+'<i>元</i>');
 			}
 		}
 		section2Ajax.init();
+		setInterval(function(){
+			section2Ajax.init();
+		},60*1000)
 	</script>
 
 </html>
